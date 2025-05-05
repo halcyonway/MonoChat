@@ -12,6 +12,12 @@ MonoChat is a minimalist yet powerful Large Language Model chatbot application d
 - 📦 Separate frontend and backend architecture for easy extension
 - 🔒 Secure API key management through environment variables
 
+## Application Preview
+
+Below is a preview of the MonoChat interface:
+
+![MonoChat Example](asset/example.png)
+
 ## Coming Soon
 
 - support DeepSearch (via [MonoSearch](https://github.com/halcyonway/MonoSearch))
