@@ -103,8 +103,12 @@ export const streamChat = async (
             const safeReasoning = data.reasoning !== undefined && data.reasoning !== null ? data.reasoning : '';
             const safeContent = data.content !== undefined && data.content !== null ? data.content : '';
             
+            // Ensure values are strings
+            const safeReasoningStr = typeof safeReasoning === 'string' ? safeReasoning : String(safeReasoning);
+            const safeContentStr = typeof safeContent === 'string' ? safeContent : String(safeContent);
+            
             // 调用回调函数，传递安全值
-            onChunk(safeReasoning, safeContent);
+            onChunk(safeReasoningStr, safeContentStr);
           } catch (error) {
             console.error('Error parsing SSE message:', error);
           }

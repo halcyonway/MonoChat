@@ -72,10 +72,10 @@ async def chat(request: ChatRequest):
                     "reasoning": full_reasoning,
                     "content": full_content
                 }
-                yield f"data: {json.dumps(response_data)}\n\n"
+                yield f"data: {json.dumps(response_data)}"
                 
                 # Allow for client disconnection check
-                await asyncio.sleep(0)
+                await asyncio.sleep(0.01)
         except asyncio.CancelledError:
             # This will be triggered when client disconnects
             print("Client disconnected, stopping generation")

@@ -7,8 +7,10 @@ const Settings = () => {
   const { 
     settings, 
     updateSettings, 
-    availableModels, 
-    toggleSettings 
+    availableModels,
+    availableThemes,
+    toggleSettings,
+    toggleDarkMode
   } = useSettings();
   
   const panelRef = useRef(null);
@@ -47,6 +49,36 @@ const Settings = () => {
         </div>
         
         <div className="settings-content">
+          {/* Theme Selection */}
+          <div className="setting-group">
+            <label htmlFor="theme-select">Theme</label>
+            <select
+              id="theme-select"
+              value={settings.theme}
+              onChange={(e) => handleSettingChange('theme', e.target.value)}
+            >
+              {availableThemes.map((theme) => (
+                <option key={theme.id} value={theme.id}>
+                  {theme.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          {/* Dark Mode Toggle */}
+          <div className="setting-group">
+            <label htmlFor="dark-mode-toggle">Dark Mode</label>
+            <label className="toggle">
+              <input
+                id="dark-mode-toggle"
+                type="checkbox"
+                checked={settings.darkMode}
+                onChange={toggleDarkMode}
+              />
+              <span className="slider"></span>
+            </label>
+          </div>
+          
           {/* Model Selection */}
           <div className="setting-group">
             <label htmlFor="model-select">Model</label>

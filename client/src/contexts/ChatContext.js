@@ -68,12 +68,20 @@ export const ChatProvider = ({ children }) => {
           
           // 处理reasoning字段 - 仅当启用了思考功能时
           if (settings.enableThinking && updates.reasoning !== undefined) {
-            safeUpdates.reasoning = updates.reasoning !== null ? updates.reasoning : '';
+            const reasoningValue = updates.reasoning !== null ? updates.reasoning : '';
+            safeUpdates.reasoning = typeof reasoningValue === 'string' ? reasoningValue : String(reasoningValue);
           }
           
           // 处理content字段
           if (updates.content !== undefined) {
-            safeUpdates.content = updates.content !== null ? updates.content : '';
+            // 过滤掉开头的换行符
+            let contentValue = updates.content !== null ? updates.content : '';
+            if (typeof contentValue === 'string' && contentValue.startsWith('\n\n')) {
+              contentValue = contentValue.replace(/^\n+/, '');
+            } else if (typeof contentValue !== 'string') {
+              contentValue = String(contentValue);
+            }
+            safeUpdates.content = contentValue;
           }
           
           // 处理其他字段

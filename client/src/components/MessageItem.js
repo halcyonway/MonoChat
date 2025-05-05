@@ -11,7 +11,32 @@ const formatTime = (timestamp) => {
 
 // Check if message contains an error
 const isErrorMessage = (content) => {
-  return content && content.startsWith('发生错误:');
+  return content && typeof content === 'string' && content.startsWith('发生错误:');
+};
+
+// Helper function to ensure content is a string
+const ensureString = (content) => {
+  if (content === null || content === undefined) return '';
+  if (typeof content === 'string') return content;
+  // If content is an object or any other non-string type, stringify it safely
+  try {
+    return String(content);
+  } catch (e) {
+    console.error('Error stringifying content:', e);
+    return '';
+  }
+};
+
+// 简单的文本内容显示组件，保留换行
+const TextContent = ({ children }) => {
+  const content = ensureString(children);
+  if (!content) return null;
+  
+  return (
+    <div className="text-content" style={{ whiteSpace: 'pre-wrap' }}>
+      {content}
+    </div>
+  );
 };
 
 // Component to display a single message
@@ -72,7 +97,11 @@ const MessageItem = ({ message }) => {
           
           {!isCollapsed && (
             <div className="reasoning-content" ref={reasoningRef}>
-              {message.reasoning ? message.reasoning : (
+              {message.reasoning ? (
+                <TextContent>
+                  {message.reasoning}
+                </TextContent>
+              ) : (
                 <span className="thinking-indicator">思考中...</span>
               )}
             </div>
@@ -89,7 +118,9 @@ const MessageItem = ({ message }) => {
         // 用户消息，正常渲染
         <div className={`message-item ${isError ? 'error' : ''}`}>
           <div className="message-content">
-            {message.content}
+            <TextContent>
+              {message.content}
+            </TextContent>
           </div>
         </div>
       ) : (
@@ -98,7 +129,11 @@ const MessageItem = ({ message }) => {
           {shouldShowReasoning && renderReasoning()}
           <div className={`message-item ${isError ? 'error' : ''}`}>
             <div className="message-content">
-              {message.content ? message.content : (
+              {message.content ? (
+                <TextContent>
+                  {message.content}
+                </TextContent>
+              ) : (
                 <span className="loading-indicator">
                   <span className="dot"></span>
                   <span className="dot"></span>

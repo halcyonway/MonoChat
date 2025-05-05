@@ -214,4 +214,34 @@ input[type="range"]::-moz-range-thumb {
 @keyframes slideIn {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
+}
+
+/* Add dark mode specific styles to the Settings.css file */
+
+/* Make sure slider transitions are smooth */
+.toggle .slider {
+  transition: background-color 0.3s ease;
+}
+
+/* Style for the dark mode toggle specifically */
+#dark-mode-toggle:checked + .slider {
+  background-color: var(--color-primary);
+}
+
+/* Dark mode icon for the slider */
+#dark-mode-toggle + .slider:before {
+  content: '☀️';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+
+#dark-mode-toggle:checked + .slider:before {
+  content: '🌙';
+}
+
+/* Enhance dark mode transition */
+.dark-mode .settings-panel {
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
 } 
