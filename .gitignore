@@ -63,3 +63,4 @@ logs/
 .cache/
 temp/
 tmp/
+draw/
