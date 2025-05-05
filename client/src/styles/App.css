@@ -6,4 +6,8 @@
   align-items: center;
   justify-content: center;
   background-color: var(--color-background);
+  padding: 15px;
+  margin: 0;
+  overflow: hidden;
+  box-sizing: border-box;
 } 

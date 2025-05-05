@@ -1,10 +1,11 @@
 .input-area {
   display: flex;
   align-items: flex-end;
-  gap: 8px;
+  gap: 10px;
   padding: 16px;
-  background-color: white;
-  border-top: 1px solid var(--color-border);
+  background-color: #fffdf7;
+  border-top: 2px solid var(--color-primary);
+  position: relative;
 }
 
 .message-input {
@@ -12,17 +13,22 @@
   resize: none;
   padding: 12px;
   max-height: 200px;
-  min-height: 40px;
+  min-height: 42px;
   border-radius: var(--border-radius);
   border: 1px solid var(--color-border);
   background-color: var(--color-background);
   font-size: 14px;
   line-height: 1.5;
-  transition: border-color var(--transition-speed);
+  transition: all var(--transition-speed);
+  box-shadow: 2px 2px 0 rgba(133, 85, 35, 0.1) inset;
+  font-family: var(--font-family);
+  color: var(--color-text);
 }
 
 .message-input:focus {
-  border-color: var(--color-secondary);
+  border-color: var(--color-primary);
+  box-shadow: 3px 3px 0 rgba(133, 85, 35, 0.2);
+  outline: none;
 }
 
 .message-input:disabled {
@@ -34,21 +40,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   background-color: var(--color-button);
   color: white;
+  border: 1px solid var(--color-secondary);
   border-radius: 50%;
-  transition: background-color var(--transition-speed);
+  transition: all var(--transition-speed);
+  box-shadow: 3px 3px 0 rgba(133, 85, 35, 0.2);
 }
 
 .send-button:hover:not(:disabled) {
   background-color: var(--color-button-hover);
+  transform: translateY(-2px);
+  box-shadow: 3px 5px 0 rgba(133, 85, 35, 0.2);
+}
+
+.send-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 1px 1px 0 rgba(133, 85, 35, 0.2);
 }
 
 .send-button:disabled {
   background-color: var(--color-button-disabled);
   cursor: not-allowed;
+  box-shadow: none;
+  border-color: var(--color-border);
 }
 
 .send-button svg {

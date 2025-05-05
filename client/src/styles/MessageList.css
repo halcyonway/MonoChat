@@ -1,9 +1,11 @@
 .message-list {
   flex: 1;
-  padding: 20px;
+  padding: 12px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  margin: 0;
+  gap: 0;
 }
 
 .message-list.empty {

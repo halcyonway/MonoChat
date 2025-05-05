@@ -27,6 +27,7 @@ const ChatContainer = () => {
   
   return (
     <div className="chat-container">
+      <div className="paper-texture"></div>
       <header className="chat-header">
         <h1 className="chat-title">MonoChat</h1>
         <div className="header-buttons">

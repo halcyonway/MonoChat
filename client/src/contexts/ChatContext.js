@@ -48,7 +48,8 @@ export const ChatProvider = ({ children }) => {
       id: uuidv4(),
       role: 'assistant',
       content: '',
-      reasoning: '',
+      // Only initialize reasoning if enabled in settings
+      ...(settings.enableThinking ? { reasoning: '' } : {}),
       isReasoningCollapsed: false,
       timestamp: Date.now(),
       userId: userMessageId // Reference to the user message that triggered this AI response
@@ -65,8 +66,8 @@ export const ChatProvider = ({ children }) => {
           // 创建安全的更新对象
           const safeUpdates = {};
           
-          // 处理reasoning字段
-          if (updates.reasoning !== undefined) {
+          // 处理reasoning字段 - 仅当启用了思考功能时
+          if (settings.enableThinking && updates.reasoning !== undefined) {
             safeUpdates.reasoning = updates.reasoning !== null ? updates.reasoning : '';
           }
           
@@ -147,12 +148,18 @@ export const ChatProvider = ({ children }) => {
         settings.enableThinking,
         (reasoning, content) => {
           // Update the AI message with the new chunks
-          updateAIMessage(aiMessage.id, { reasoning, content });
+          const updates = { content };
+          if (settings.enableThinking) {
+            updates.reasoning = reasoning;
+          }
+          updateAIMessage(aiMessage.id, updates);
         }
       );
       
-      // When streaming is complete, collapse reasoning
-      updateAIMessage(aiMessage.id, { isReasoningCollapsed: true });
+      // When streaming is complete, collapse reasoning if enabled
+      if (settings.enableThinking) {
+        updateAIMessage(aiMessage.id, { isReasoningCollapsed: true });
+      }
     } catch (error) {
       console.error('Error retrying message:', error);
       // Update the AI message with an error
@@ -200,12 +207,18 @@ export const ChatProvider = ({ children }) => {
         settings.enableThinking,
         (reasoning, content) => {
           // Update the AI message with the new chunks
-          updateAIMessage(aiMessage.id, { reasoning, content });
+          const updates = { content };
+          if (settings.enableThinking) {
+            updates.reasoning = reasoning;
+          }
+          updateAIMessage(aiMessage.id, updates);
         }
       );
       
-      // When streaming is complete, collapse reasoning
-      updateAIMessage(aiMessage.id, { isReasoningCollapsed: true });
+      // When streaming is complete, collapse reasoning if enabled
+      if (settings.enableThinking) {
+        updateAIMessage(aiMessage.id, { isReasoningCollapsed: true });
+      }
     } catch (error) {
       console.error('Error sending message:', error);
       // Update the AI message with an error
