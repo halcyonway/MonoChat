@@ -1,0 +1,210 @@
+.message-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* User alignment */
+.message-container.user {
+  align-items: flex-end;
+}
+
+/* Assistant alignment */
+.message-container.assistant {
+  align-items: flex-start;
+}
+
+.message-item {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-width: 90%;
+  box-shadow: var(--shadow-small);
+}
+
+/* User message styling */
+.message-container.user .message-item {
+  background-color: var(--color-user-message);
+}
+
+/* Assistant message styling */
+.message-container.assistant .message-item {
+  background-color: var(--color-assistant-message);
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.message-role {
+  font-weight: 600;
+}
+
+.message-time {
+  color: var(--color-text-light);
+}
+
+.message-content {
+  padding: 12px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+/* Reasoning container */
+.message-reasoning-container {
+  width: 100%;
+  max-width: 90%;
+  margin-bottom: 8px;
+  transition: all var(--transition-speed) ease;
+}
+
+.message-reasoning-container.collapsed {
+  margin-bottom: 0;
+  max-height: 40px;
+  overflow: hidden;
+}
+
+.message-container.assistant .message-reasoning-container {
+  align-self: flex-start;
+}
+
+.message-container.user .message-reasoning-container {
+  align-self: flex-end;
+}
+
+/* Reasoning/thinking section */
+.message-reasoning {
+  background-color: #f5f0ff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.reasoning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  color: #666;
+  cursor: pointer;
+}
+
+.reasoning-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reasoning-title svg {
+  color: #8980b7;
+  flex-shrink: 0;
+}
+
+.toggle-button {
+  font-size: 0.75rem;
+  color: #8980b7;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.reasoning-content {
+  padding: 0 16px 16px;
+  font-size: 0.875rem;
+  color: #333;
+  white-space: pre-wrap;
+  max-height: 300px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* Loading indicator for AI responses */
+.loading-indicator {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-text-light);
+  border-radius: 50%;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.4;
+    transform: scale(0.75);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Thinking indicator */
+.thinking-indicator {
+  font-style: italic;
+  color: var(--color-text-light);
+}
+
+/* Error message styling */
+.message-item.error .message-content {
+  color: #e74c3c;
+}
+
+.message-error-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.retry-button {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background-color var(--transition-speed);
+}
+
+.retry-button:hover {
+  background-color: #c0392b;
+}
+
+.reasoning-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.reasoning-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.reasoning-content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+} 

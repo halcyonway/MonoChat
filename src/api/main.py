@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException, Request
+from datatype.chat import ChatRequest
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from typing import List, Dict, Any
-import asyncio
 import json
+import asyncio
+
+from llm import SiliconFlowLlm
+from datatype.common import LlmConfig
 
 app = FastAPI(title="MonoChat API")
 
@@ -17,16 +19,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-class ChatMessage(BaseModel):
-    role: str
-    content: str
-
-class ChatRequest(BaseModel):
-    messages: List[ChatMessage]
-
 @app.get("/")
 async def read_root():
     return {"status": "ok", "message": "MonoChat API is running"}
+
+@app.get("/api/models")
+async def get_models():
+    return {
+        "models": [
+            "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B",
+            "Qwen/Qwen3-8B", 
+            "THUDM/GLM-4-9B-0414", 
+            "Qwen/Qwen3-32B"
+        ]
+    }
 
 @app.post("/api/chat")
 async def chat(request: ChatRequest):
@@ -34,19 +40,48 @@ async def chat(request: ChatRequest):
     if not request.messages:
         raise HTTPException(status_code=400, detail="No messages provided")
     
-    # 获取最后一条用户消息
-    last_message = request.messages[-1]
+    # 转换Pydantic模型到字典列表
+    formatted_messages = [{"role": msg.role, "content": msg.content} for msg in request.messages]
     
-    # 模拟流式响应文本
-    response_text = f"这是对'{last_message.content}'的AI回复。这是一个流式响应的演示。"
+    config = LlmConfig(
+        model_name=request.model,
+        temperature=request.temperature,
+        top_p=request.top_p,
+        max_tokens=request.max_tokens,
+        enable_thinking=request.enable_thinking
+    )
+    
+    llm = SiliconFlowLlm(config)
     
     async def generate():
-        # 发送SSE格式的数据
-        for char in response_text:
-            await asyncio.sleep(0.05)
-            yield char
+        full_reasoning = ""
+        full_content = ""
+        
+        try:
+            for reasoning_chunk, content_chunk in llm.streaming_chat_with_reasoning(messages=formatted_messages):
+                reasoning_chunk = reasoning_chunk or ""
+                content_chunk = content_chunk or ""
+                
+                if reasoning_chunk:
+                    full_reasoning += reasoning_chunk
+                
+                if content_chunk:
+                    full_content += content_chunk
+                
+                response_data = {
+                    "reasoning": full_reasoning,
+                    "content": full_content
+                }
+                yield f"data: {json.dumps(response_data)}\n\n"
+                
+                # Allow for client disconnection check
+                await asyncio.sleep(0)
+        except asyncio.CancelledError:
+            # This will be triggered when client disconnects
+            print("Client disconnected, stopping generation")
+            raise
     
-    return StreamingResponse(generate(), media_type="text/plain")
+    return StreamingResponse(generate(), media_type="text/event-stream")
 
 if __name__ == "__main__":
     import uvicorn

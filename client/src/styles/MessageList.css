@@ -1,0 +1,49 @@
+.message-list {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.message-list.empty {
+  justify-content: center;
+  align-items: center;
+}
+
+.welcome-message {
+  text-align: center;
+  max-width: 400px;
+  padding: 20px;
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-small);
+}
+
+.welcome-message h2 {
+  margin-bottom: 12px;
+  color: var(--color-primary);
+}
+
+.welcome-message p {
+  color: var(--color-text-light);
+}
+
+/* Error notification */
+.error-notification {
+  align-self: center;
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 10px 16px;
+  border-radius: var(--border-radius);
+  margin: 10px 0;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+.error-icon {
+  font-size: 1rem;
+} 

@@ -6,29 +6,19 @@ from datatype.common import LlmConfig, LLMAPIResponse
 from utils import secret_holder
 
 class SiliconFlowLlm:
-    """LLM API client class"""
-    
     _API_URL = "https://api.siliconflow.cn/v1/chat/completions"
     
     def __init__(self, config: Optional[LlmConfig] = None):
-        """
-        Initialize LLM client
-        
-        Args:
-            config: LLM configuration, uses default if None
-        """
         self.config = config or LlmConfig()
         self.api_key = secret_holder.get_silicon_flow_api_key()
     
     def _get_headers(self) -> Dict[str, str]:
-        """Get API request headers"""
         return {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
     
     def _prepare_payload(self, messages: List[Dict[str, str]], stream: bool = False) -> Dict[str, Any]:
-        """Prepare API request payload"""
         payload = {
             "model": self.config.model_name,
             "messages": messages,
@@ -37,27 +27,13 @@ class SiliconFlowLlm:
             "top_p": self.config.top_p,
             "enable_thinking": self.config.enable_thinking
         }
-        
         if self.config.max_tokens:
             payload["max_tokens"] = self.config.max_tokens
-        
-        # Add extra parameters
         payload.update(self.config.extra_params)
-        
         return payload
     
     def chat(self, messages: List[Dict[str, str]]) -> LLMAPIResponse:
-        """
-        Standard chat completion
-        
-        Args:
-            messages: List of message objects with 'role' and 'content' keys
-        
-        Returns:
-            LLMAPIResponse: API response
-        """
         payload = self._prepare_payload(messages, stream=False)
-        
         try:
             response = requests.post(
                 self._API_URL,
@@ -65,7 +41,6 @@ class SiliconFlowLlm:
                 json=payload,
                 timeout=60
             )
-            
             response.raise_for_status()
             return LLMAPIResponse.model_validate(response.json())
         except Exception as e:
@@ -76,63 +51,33 @@ class SiliconFlowLlm:
             )
     
     def streaming_chat(self, messages: List[Dict[str, str]], include_reasoning: bool = False) -> Generator[Union[str, Tuple[str, str]], None, None]:
-        """
-        Streaming chat completion
-        
-        Args:
-            messages: List of message objects with 'role' and 'content' keys
-            include_reasoning: If True, return both reasoning_content and content as a tuple
-                              If False, only return content
-        
-        Yields:
-            Union[str, Tuple[str, str]]: Text chunks as they are generated
-                                          If include_reasoning is True, yields (reasoning, content)
-                                          If include_reasoning is False, yields content only
-        """
         payload = self._prepare_payload(messages, stream=True)
-        
         try:
             response = requests.post(
                 self._API_URL,
                 headers=self._get_headers(),
                 json=payload,
                 stream=True,
-                timeout=120  # Increased timeout for streaming
+                timeout=120
             )
-            
             response.raise_for_status()
-            
             for line in response.iter_lines():
                 if not line:
                     continue
-                
-                # Remove "data: " prefix
                 if line.startswith(b"data: "):
                     line = line[6:]
-                
-                # Check for stream end
                 if line.strip() == b"[DONE]":
                     break
-                
                 try:
                     data = json.loads(line)
                     delta = data.get("choices", [{}])[0].get("delta", {})
-                    
-                    # Extract content and reasoning_content
                     content = delta.get("content", "")
                     reasoning_content = delta.get("reasoning_content", "")
-                    
-                    # Handle tool_calls if present
-                    tool_calls = delta.get("tool_calls", None)
-                    
-                    # Yield based on the include_reasoning flag
                     if include_reasoning:
                         yield (reasoning_content, content) if reasoning_content or content else ("", "")
                     else:
-                        # Default behavior: only yield content
                         if content:
                             yield content
-                        
                 except json.JSONDecodeError:
                     continue
                 except Exception as e:
@@ -144,15 +89,6 @@ class SiliconFlowLlm:
                 yield ("", f"[Error: {str(e)}]")
             else:
                 yield f"[Error: {str(e)}]"
-            
+    
     def streaming_chat_with_reasoning(self, messages: List[Dict[str, str]]) -> Generator[Tuple[str, str], None, None]:
-        """
-        Streaming chat completion that includes reasoning content
-        
-        Args:
-            messages: List of message objects with 'role' and 'content' keys
-        
-        Yields:
-            Tuple[str, str]: A tuple of (reasoning_content, content) as they are generated
-        """
         return self.streaming_chat(messages, include_reasoning=True) 
